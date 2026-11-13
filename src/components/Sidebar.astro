@@ -1,5 +1,6 @@
 ---
-import Logo from "@/assets/logo.svg"
+import logoDark from "@/assets/logo-dark.png"
+import logoLight from "@/assets/logo-light.png"
 import ThemeToggle from "@/components/ThemeToggle.astro"
 import { NAVIGATION, SITE } from "@/consts"
 import { normalizePath } from "@/lib/utils"
@@ -16,7 +17,8 @@ const section = NAVIGATION.find(
 <aside data-bar>
   <sidebar-inner>
     <a href="/" aria-label={SITE.title}>
-      <Logo />
+      <img src={logoLight.src} alt="" data-logo="light" />
+      <img src={logoDark.src} alt="" data-logo="dark" />
       <span>{SITE.title}</span>
     </a>
     <nav>
@@ -100,7 +102,7 @@ const section = NAVIGATION.find(
       color: var(--foreground);
       text-decoration-line: none;
 
-      svg {
+      img {
         inline-size: 1.125rem;
         block-size: 1.125rem;
         flex-shrink: 0;
@@ -177,6 +179,30 @@ const section = NAVIGATION.find(
     @media (width < 64rem) {
       margin-inline-start: 0;
       margin-inline-end: -0.5rem;
+    }
+  }
+
+  [data-logo="dark"] {
+    display: none;
+  }
+
+  :global(:root[data-theme="dark"]) {
+    [data-logo="light"] {
+      display: none;
+    }
+    [data-logo="dark"] {
+      display: block;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme])) {
+      [data-logo="light"] {
+        display: none;
+      }
+      [data-logo="dark"] {
+        display: block;
+      }
     }
   }
 </style>
