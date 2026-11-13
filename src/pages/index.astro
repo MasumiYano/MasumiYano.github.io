@@ -2,44 +2,115 @@
 import MetaPage from "@/components/MetaPage.astro"
 import Layout from "@/layouts/Layout.astro"
 import { SITE } from "@/consts"
+import { getPosts } from "@/lib/content"
+import { formatDate } from "@/lib/utils"
+
+const posts = (await getPosts()).slice(0, 5)
 ---
 
 <Layout>
   <MetaPage slot="head" />
   <home-intro>
-    <h1>{SITE.title}</h1>
-    <p>{SITE.description}</p>
-    <prose-content>
-      <p>
-        Hello, I'm Masumi Yano. I'm an MLE with interest in serving models as
-        cheap as possible, as fast as possible, and as reliably as possible. I
-        blog about ML techniques, life, and more (maybe)!
-      </p>
-      <p><a href="/blog">Read the blog →</a></p>
-    </prose-content>
+    <h1>{SITE.description}.</h1>
+    <p>
+      Hello, I'm Masumi Yano. I'm an MLE with interest in serving models as
+      cheap as possible, as fast as possible, and as reliably as possible. I
+      blog about ML techniques, life, and more (maybe)!
+    </p>
   </home-intro>
+
+  {posts.length > 0 && (
+    <home-recent>
+      <h2>Recent</h2>
+      <ul>
+        {posts.map((post) => (
+          <li>
+            <time datetime={post.data.date.toISOString()}>
+              {formatDate(post.data.date)}
+            </time>
+            <a href={`/blog/${post.id}`}>{post.data.title}</a>
+          </li>
+        ))}
+      </ul>
+      <a href="/blog">All posts →</a>
+    </home-recent>
+  )}
 </Layout>
 
 <style>
-  home-intro {
+  home-intro,
+  home-recent {
     display: block;
     font-size: var(--step-0);
     color: var(--muted-foreground);
+  }
 
+  home-intro {
     @media (width >= 64rem) {
       margin-block-start: -0.2em;
     }
 
     h1 {
-      font-size: var(--step-2);
+      font-size: var(--step-1);
       line-height: calc(var(--leading-offset) + 1em);
       font-weight: var(--font-weight-medium);
       color: var(--foreground);
-      margin-block-end: var(--space-2xs);
+      max-inline-size: 28ch;
+      margin-block-end: var(--space-s);
     }
 
-    prose-content {
-      margin-block-start: var(--space-m);
+    p {
+      max-inline-size: 60ch;
+    }
+  }
+
+  home-recent {
+    margin-block-start: var(--space-xl);
+    padding-block-start: var(--space-m);
+    border-block-start: 2px solid var(--border);
+
+    h2 {
+      font-size: var(--step--1);
+      font-weight: var(--font-weight-medium);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-block-end: var(--space-s);
+    }
+
+    ul {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2xs);
+      margin-block-end: var(--space-m);
+    }
+
+    li {
+      display: grid;
+      grid-template-columns: 7.5rem 1fr;
+      gap: var(--space-s);
+
+      @media (width < 26rem) {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+    }
+
+    time {
+      font-variant-numeric: tabular-nums;
+      opacity: 0.7;
+    }
+
+    li a {
+      color: var(--foreground);
+      text-decoration-line: none;
+
+      &:hover {
+        text-decoration-line: underline;
+      }
+    }
+
+    > a {
+      color: var(--muted-foreground);
     }
   }
 </style>
